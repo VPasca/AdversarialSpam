@@ -26,8 +26,7 @@ If the attack was successful:
 LeiAdvEx
 PERTURBED TEXT
 ChaNGed LaBEl YESSS (optional, if the attack caused misclassification)
-Note though "ChaNGed LaBEl YESSS" can appear in the lines containing email content and on multiple lines, so it should be check if it is present
-and then removed
+Note though "ChaNGed LaBEl YESSS" can appear in the lines containing email content and on multiple lines, so it should be checked if it is present and then removed from any line it appears on (that is what I did at least)
 NuMBer WoRds ChaNGed (number)
 
 "Finished Attacking This Sample, Please Proceed" should be removed from anyline because this was a failed attempt at distinguishing
