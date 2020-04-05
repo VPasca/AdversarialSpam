@@ -1,1 +1,8 @@
-This file contains the adversarial outputs from the attack on the WCNN and LSTM.
+This file contains links to the adversarial outputs on Dropbox from the attack on the WCNN and LSTM.
+
+
+VladsOutputCNN
+https://www.dropbox.com/s/baf46od4xvlxuzf/VladsOutputCNN.txt?dl=0
+
+VladsOutputLSTM
+https://www.dropbox.com/s/t2jnblwtiimc66g/VladsOutputLSTM.txt?dl=0
