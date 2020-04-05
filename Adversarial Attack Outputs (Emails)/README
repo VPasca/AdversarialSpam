@@ -6,3 +6,29 @@ https://www.dropbox.com/s/baf46od4xvlxuzf/VladsOutputCNN.txt?dl=0
 
 VladsOutputLSTM
 https://www.dropbox.com/s/t2jnblwtiimc66g/VladsOutputLSTM.txt?dl=0
+
+
+Note these text files are quite messy. 
+
+Each Output email outputs as the following.
+
+The first three lines are:
+Original Label 1 OR Original Label 0 (Note 0 means spam, 1 means ham)
+Original words: 
+ORIGINAL TEXT
+
+Then, if the attack failed:
+Attack failed: Not enough valid neighbouring words
+OR
+Attack failed:Initial predicted label was wrong
+
+If the attack was successful:
+LeiAdvEx
+PERTURBED TEXT
+ChaNGed LaBEl YESSS (optional, if the attack caused misclassification)
+Note though "ChaNGed LaBEl YESSS" can appear in the lines containing email content and on multiple lines, so it should be check if it is present
+and then removed
+NuMBer WoRds ChaNGed (number)
+
+"Finished Attacking This Sample, Please Proceed" should be removed from anyline because this was a failed attempt at distinguishing
+between each attack (instead in the Analysis, "Original Label" was used to distinguish each email.
