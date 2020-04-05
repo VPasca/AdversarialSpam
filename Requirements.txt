@@ -1,0 +1,47 @@
+Requirements
+
+Python (For WCNN and LSTM Training)
+
+PyTorch/torch
+SentencePiece
+Gensim
+numpy
+nltk
+wmd
+re
+copy
+math
+logging
+argparse
+time
+torchtext
+sklearn
+sys
+spacy
+collections
+csv
+
+Python (For Analysis)
+
+os
+io
+numpy
+csv
+spacy (including the en_core_web_sm trained model)
+textblob
+textstat
+re
+scipy
+nltk
+string
+lexicalrichness
+matplotlib
+sklearn
+statistics
+seaborn
+
+R (For Analysis)
+
+effsize
+quanteda
+caret
