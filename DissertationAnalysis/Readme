@@ -3,3 +3,22 @@ These files are mainly for sections 3.2.1, 3.2.2 and 3.3 in the dissertation. Th
 in the folder preluding this folder called ClassifierPerformance(Section3.1).
 
 
+The following CSV files were used for Cohen tests in R
+
+LSTMOrigPerturbPairDF (just original and perturbed word cohen tests)
+WCNNOrigPerturbPairDF (just original and perturbed word cohen tests)
+
+LSTMWholeEmailCohen  (original and perturbed email cohen tests)
+CNNWholeEmailCohen   (original and perturbed email cohen tests)
+
+This file was used to produce the TF-IDF weighted tokens for the exploratory classifcation in section 3.3
+
+https://www.dropbox.com/s/p29t94upao3bnsl/ClassificationDataFrame.csv?dl=0
+
+These are the files after adding TF-IDF weighted tokens
+
+OrigorPertDF (for the binary original email or perturbed email classification task)
+https://www.dropbox.com/s/x0ezzwxn1yuan93/OrigorPertDF.csv?dl=0
+
+OrigorCNNPertorLSTMPertDF (for the multilabel email classification of original vs perturbed from WCNN attack vs perturbed from LSTM attack)
+https://www.dropbox.com/s/gbmggkjzsmlam7e/OrigorCNNPertorLSTMPertDF.csv?dl=0
