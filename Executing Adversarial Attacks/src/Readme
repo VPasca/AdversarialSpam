@@ -1,1 +1,6 @@
 
+Note modifications have been made to files (e.g. training files and discrete attack).
+This firstly allowed for outputs to be written to files. 
+Secondly, some modifications were needed to make the files run because versions of packages had changed (e.g. Torch)
+
+
