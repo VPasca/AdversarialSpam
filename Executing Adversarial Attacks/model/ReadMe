@@ -7,3 +7,8 @@ https://www.dropbox.com/s/m3w3xmvnqeo2ezt/model_cnn?dl=0
 LSTM
 
 https://www.dropbox.com/s/wv90ajws7iafcii/model_lstm?dl=0
+
+To run the attacks on these models, make sure to follow the instructions from https://github.com/cecilialeiqi/adversarial_text
+
+Accordingly, make sure to leave these models in the model folder. If you move them elsewhere, unless in the Makefile
+you change the file path to where the models are stored, the attacks will not run.
