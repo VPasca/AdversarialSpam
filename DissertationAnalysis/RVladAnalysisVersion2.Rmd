@@ -1,0 +1,934 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+changing working directory to the backup of my virtual machine
+
+
+```{r}
+setwd("D:/Virtual Machine Backup")
+getwd()
+```
+reading a csv produced from the python analysis jupytyer notebook. this csv has the original word in the first column and perturbed word in the second column. 
+
+The other columns are composed of values for the words (e.g. word length). The columns should be fairly self-explanatory but essentially one column has a value for the original word and another column has the value for the perturbed word
+```{r}
+WCNNOriginalPerturbPairDF = read.csv("WCNNOrigPerturbPairDF.csv")
+View(WCNNOriginalPerturbPairDF)
+```
+
+
+Importing the effsize library to get Cohen's D estimates
+```{r}
+library(effsize)
+```
+
+```{r}
+cohen.d(WCNNOriginalPerturbPairDF$LengthOrig, WCNNOriginalPerturbPairDF$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+
+```{r}
+cohen.d(WCNNOriginalPerturbPairDF$SentimentOrig, WCNNOriginalPerturbPairDF$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+```{r}
+cohen.d(WCNNOriginalPerturbPairDF$SyllableOrig, WCNNOriginalPerturbPairDF$SyllablePert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+```{r}
+View(WCNNOriginalPerturbPairDF)
+
+```
+```{r}
+cohen.d(WCNNOriginalPerturbPairDF$SubjectivityOrig, WCNNOriginalPerturbPairDF$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+
+Preparing for disaggregating by Misclassified Emails and those that were correctly classified. Also disaggregating by spam and ham.
+```{r}
+# only misclassify yes (so essentially comparing spam vs ham for misclassify yes)
+MisclassifyYesOnly = c("Yes")
+MisclassifyNoOnly = c("No")
+
+SpamOnly = c("Spam")
+HamOnly = c("Ham")
+
+`%notin%` <- Negate(`%in%`)
+
+
+```
+
+Calculating Cohen's d for the original-adversarial pairs that were derived from emails that misclassification.
+
+```{r}
+#WCNNMisclassifyYesPair = subset(WCNNOriginalPerturbPairDF, Misclassify == "Yes")
+WCNNMisclassifyYesPair = WCNNOriginalPerturbPairDF[which(WCNNOriginalPerturbPairDF$Misclassify == "Yes"),]
+View(WCNNMisclassifyYesPair)
+
+cohen.d(WCNNMisclassifyYesPair$LengthOrig, WCNNMisclassifyYesPair$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(WCNNMisclassifyYesPair$SentimentOrig, WCNNMisclassifyYesPair$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(WCNNMisclassifyYesPair$SyllableOrig, WCNNMisclassifyYesPair$SyllablePert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+
+```
+```{r}
+cohen.d(WCNNMisclassifyYesPair$SubjectivityOrig, WCNNMisclassifyYesPair$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+Calculating Cohen's d for the original-adversarial pairs that were derived from emails that failed at causing misclassification.
+
+
+```{r}
+WCNNMisclassifyNoPair = WCNNOriginalPerturbPairDF[which(WCNNOriginalPerturbPairDF$Misclassify == "No"),]
+cohen.d(WCNNMisclassifyNoPair$LengthOrig, WCNNMisclassifyNoPair$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(WCNNMisclassifyNoPair$SentimentOrig, WCNNMisclassifyNoPair$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(WCNNMisclassifyNoPair$SyllableOrig, WCNNMisclassifyNoPair$SyllablePert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(WCNNMisclassifyNoPair$SubjectivityOrig, WCNNMisclassifyNoPair$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+```{r}
+
+WCNNSpamPair = WCNNOriginalPerturbPairDF[which(WCNNOriginalPerturbPairDF$OriginalLabel == "Spam"),]
+View(WCNNSpamPair)
+WCNNHamPair = WCNNOriginalPerturbPairDF[which(WCNNOriginalPerturbPairDF$OriginalLabel == "Ham"),]
+View(WCNNHamPair)
+```
+
+```{r}
+#Calculating Cohen's d for the original-adversarial pairs that were derived from spam emails that 
+cohen.d(WCNNSpamPair$LengthOrig, WCNNSpamPair$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(WCNNSpamPair$SentimentOrig, WCNNSpamPair$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(WCNNSpamPair$SyllableOrig, WCNNSpamPair$SyllablePert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+```{r}
+cohen.d(WCNNSpamPair$SubjectivityOrig, WCNNSpamPair$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+
+
+
+```{r}
+#Calculating Cohen's d for the original-adversarial pairs that were derived from ham emails that 
+cohen.d(WCNNHamPair$LengthOrig, WCNNHamPair$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(WCNNHamPair$SentimentOrig, WCNNHamPair$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(WCNNHamPair$SyllableOrig, WCNNHamPair$SyllablePert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+```{r}
+cohen.d(WCNNHamPair$SubjectivityOrig, WCNNHamPair$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+
+#########CNN WHole Email Cohen Tests
+
+```{r}
+CNNWholeEmailCohen = read.csv("CNNWholeEmailCohen.csv")
+```
+
+This follows the same process as above except now we are working with whole emails (origianl-adversarially perturbe email pairs). Firstly, Cohen's d is calculated at the aggregate level regardless of whether the original email was spam or ham or whether the perturbed email caused misclassification or not.
+```{r}
+print("test 1")
+cohen.d(CNNWholeEmailCohen$LengthOrig, CNNWholeEmailCohen$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 2")
+cohen.d(CNNWholeEmailCohen$CharSentOrig, CNNWholeEmailCohen$CharSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 3")
+cohen.d(CNNWholeEmailCohen$CharWordOrig, CNNWholeEmailCohen$CharWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 4")
+cohen.d(CNNWholeEmailCohen$SyllOrig, CNNWholeEmailCohen$SyllPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 5")
+cohen.d(CNNWholeEmailCohen$SyllSentOrig, CNNWholeEmailCohen$SyllSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 6")
+cohen.d(CNNWholeEmailCohen$SyllWordOrig, CNNWholeEmailCohen$SyllWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 7")
+cohen.d(CNNWholeEmailCohen$PercentMonoOrig, CNNWholeEmailCohen$PercentMonoPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 8")
+cohen.d(CNNWholeEmailCohen$PercentDiOrig, CNNWholeEmailCohen$PercentDiPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 9")
+cohen.d(CNNWholeEmailCohen$PercentTriOrig, CNNWholeEmailCohen$PercentTriPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 10")
+cohen.d(CNNWholeEmailCohen$Percent4Orig, CNNWholeEmailCohen$Percent4Pert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 11")
+cohen.d(CNNWholeEmailCohen$SentimentOrig, CNNWholeEmailCohen$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 12")
+cohen.d(CNNWholeEmailCohen$SubjectivityOrig, CNNWholeEmailCohen$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 13")
+cohen.d(CNNWholeEmailCohen$SubjectivityOrig, CNNWholeEmailCohen$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 14")
+cohen.d(CNNWholeEmailCohen$ReadOrig, CNNWholeEmailCohen$ReadPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 15")
+cohen.d(CNNWholeEmailCohen$PercentCommonOrig, CNNWholeEmailCohen$PercentCommonPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 16")
+cohen.d(CNNWholeEmailCohen$LexRichOrig, CNNWholeEmailCohen$LexRichPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 17")
+cohen.d(CNNWholeEmailCohen$PercentStopOrig, CNNWholeEmailCohen$PercentStopPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 18")
+cohen.d(CNNWholeEmailCohen$PercentVerbsOrig, CNNWholeEmailCohen$PercentVerbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 19")
+cohen.d(CNNWholeEmailCohen$PercentAdverbsOrig, CNNWholeEmailCohen$PercentAdverbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 20")
+cohen.d(CNNWholeEmailCohen$PercentNounsOrig, CNNWholeEmailCohen$PercentNounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 21")
+cohen.d(CNNWholeEmailCohen$PercentPronounsOrig, CNNWholeEmailCohen$PercentPronounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 22")
+cohen.d(CNNWholeEmailCohen$PercentAdjOrig, CNNWholeEmailCohen$PercentAdjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 23")
+cohen.d(CNNWholeEmailCohen$PercentDetrOrig, CNNWholeEmailCohen$PercentDetrPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 24")
+cohen.d(CNNWholeEmailCohen$PercentConjOrig, CNNWholeEmailCohen$PercentConjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 25")
+cohen.d(CNNWholeEmailCohen$PercentNamedEntOrig, CNNWholeEmailCohen$PercentNamedEntPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 26")
+cohen.d(CNNWholeEmailCohen$PercentPastVerbOrig, CNNWholeEmailCohen$PercentPastVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 27")
+cohen.d(CNNWholeEmailCohen$PercentPresentVerbOrig, CNNWholeEmailCohen$PercentPresentVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+```{r}
+#Generating disaggregated emails by ones that caused misclassification and those that failed to do so.
+CNNCohenMisclassifyYes = CNNWholeEmailCohen[which(CNNWholeEmailCohen$Misclassify == "Yes"),]
+View(CNNCohenMisclassifyYes)
+CNNCohenMisclassifyNo = CNNWholeEmailCohen[which(CNNWholeEmailCohen$Misclassify == "No"),]
+View(CNNCohenMisclassifyNo)
+```
+
+Cohen's d tests on emails that caused misclassification
+```{r}
+print("test 1")
+cohen.d(CNNCohenMisclassifyYes$LengthOrig, CNNCohenMisclassifyYes$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 2")
+cohen.d(CNNCohenMisclassifyYes$CharSentOrig, CNNCohenMisclassifyYes$CharSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 3")
+cohen.d(CNNCohenMisclassifyYes$CharWordOrig, CNNCohenMisclassifyYes$CharWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 4")
+cohen.d(CNNCohenMisclassifyYes$SyllOrig, CNNCohenMisclassifyYes$SyllPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 5")
+cohen.d(CNNCohenMisclassifyYes$SyllSentOrig, CNNCohenMisclassifyYes$SyllSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 6")
+cohen.d(CNNCohenMisclassifyYes$SyllWordOrig, CNNCohenMisclassifyYes$SyllWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 7")
+cohen.d(CNNCohenMisclassifyYes$PercentMonoOrig, CNNCohenMisclassifyYes$PercentMonoPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 8")
+cohen.d(CNNCohenMisclassifyYes$PercentDiOrig, CNNCohenMisclassifyYes$PercentDiPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 9")
+cohen.d(CNNCohenMisclassifyYes$PercentTriOrig, CNNCohenMisclassifyYes$PercentTriPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 10")
+cohen.d(CNNCohenMisclassifyYes$Percent4Orig, CNNCohenMisclassifyYes$Percent4Pert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 11")
+cohen.d(CNNCohenMisclassifyYes$SentimentOrig, CNNCohenMisclassifyYes$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 12")
+cohen.d(CNNCohenMisclassifyYes$SubjectivityOrig, CNNCohenMisclassifyYes$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+# print("test 13")
+# cohen.d(CNNCohenMisclassifyYes$SubjectivityOrig, CNNCohenMisclassifyYes$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 13")
+cohen.d(CNNCohenMisclassifyYes$ReadOrig, CNNCohenMisclassifyYes$ReadPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 14")
+cohen.d(CNNCohenMisclassifyYes$PercentCommonOrig, CNNCohenMisclassifyYes$PercentCommonPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 15")
+cohen.d(CNNCohenMisclassifyYes$LexRichOrig, CNNCohenMisclassifyYes$LexRichPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 16")
+cohen.d(CNNCohenMisclassifyYes$PercentStopOrig, CNNCohenMisclassifyYes$PercentStopPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 17")
+cohen.d(CNNCohenMisclassifyYes$PercentVerbsOrig, CNNCohenMisclassifyYes$PercentVerbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 18")
+cohen.d(CNNCohenMisclassifyYes$PercentAdverbsOrig, CNNCohenMisclassifyYes$PercentAdverbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 19")
+cohen.d(CNNCohenMisclassifyYes$PercentNounsOrig, CNNCohenMisclassifyYes$PercentNounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 20")
+cohen.d(CNNCohenMisclassifyYes$PercentPronounsOrig, CNNCohenMisclassifyYes$PercentPronounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 21")
+cohen.d(CNNCohenMisclassifyYes$PercentAdjOrig, CNNCohenMisclassifyYes$PercentAdjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 22")
+cohen.d(CNNCohenMisclassifyYes$PercentDetrOrig, CNNCohenMisclassifyYes$PercentDetrPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 23")
+cohen.d(CNNCohenMisclassifyYes$PercentConjOrig, CNNCohenMisclassifyYes$PercentConjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 24")
+cohen.d(CNNCohenMisclassifyYes$PercentNamedEntOrig, CNNCohenMisclassifyYes$PercentNamedEntPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 25")
+cohen.d(CNNCohenMisclassifyYes$PercentPastVerbOrig, CNNCohenMisclassifyYes$PercentPastVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 26")
+cohen.d(CNNCohenMisclassifyYes$PercentPresentVerbOrig, CNNCohenMisclassifyYes$PercentPresentVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+
+Cohen's d tests for emails that failed at causing misclassification
+```{r}
+print("test 1")
+cohen.d(CNNCohenMisclassifyNo$LengthOrig, CNNCohenMisclassifyNo$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 2")
+cohen.d(CNNCohenMisclassifyNo$CharSentOrig, CNNCohenMisclassifyNo$CharSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 3")
+cohen.d(CNNCohenMisclassifyNo$CharWordOrig, CNNCohenMisclassifyNo$CharWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 4")
+cohen.d(CNNCohenMisclassifyNo$SyllOrig, CNNCohenMisclassifyNo$SyllPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 5")
+cohen.d(CNNCohenMisclassifyNo$SyllSentOrig, CNNCohenMisclassifyNo$SyllSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 6")
+cohen.d(CNNCohenMisclassifyNo$SyllWordOrig, CNNCohenMisclassifyNo$SyllWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 7")
+cohen.d(CNNCohenMisclassifyNo$PercentMonoOrig, CNNCohenMisclassifyNo$PercentMonoPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 8")
+cohen.d(CNNCohenMisclassifyNo$PercentDiOrig, CNNCohenMisclassifyNo$PercentDiPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 9")
+cohen.d(CNNCohenMisclassifyNo$PercentTriOrig, CNNCohenMisclassifyNo$PercentTriPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 10")
+cohen.d(CNNCohenMisclassifyNo$Percent4Orig, CNNCohenMisclassifyNo$Percent4Pert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 11")
+cohen.d(CNNCohenMisclassifyNo$SentimentOrig, CNNCohenMisclassifyNo$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 12")
+cohen.d(CNNCohenMisclassifyNo$SubjectivityOrig, CNNCohenMisclassifyNo$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+# print("test 13")
+# cohen.d(CNNCohenMisclassifyYes$SubjectivityOrig, CNNCohenMisclassifyYes$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 13")
+cohen.d(CNNCohenMisclassifyNo$ReadOrig, CNNCohenMisclassifyNo$ReadPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 14")
+cohen.d(CNNCohenMisclassifyNo$PercentCommonOrig, CNNCohenMisclassifyNo$PercentCommonPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 15")
+cohen.d(CNNCohenMisclassifyNo$LexRichOrig, CNNCohenMisclassifyNo$LexRichPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 16")
+cohen.d(CNNCohenMisclassifyNo$PercentStopOrig, CNNCohenMisclassifyNo$PercentStopPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 17")
+cohen.d(CNNCohenMisclassifyNo$PercentVerbsOrig, CNNCohenMisclassifyNo$PercentVerbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 18")
+cohen.d(CNNCohenMisclassifyNo$PercentAdverbsOrig, CNNCohenMisclassifyNo$PercentAdverbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 19")
+cohen.d(CNNCohenMisclassifyNo$PercentNounsOrig, CNNCohenMisclassifyNo$PercentNounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 20")
+cohen.d(CNNCohenMisclassifyNo$PercentPronounsOrig, CNNCohenMisclassifyNo$PercentPronounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 21")
+cohen.d(CNNCohenMisclassifyNo$PercentAdjOrig, CNNCohenMisclassifyNo$PercentAdjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 22")
+cohen.d(CNNCohenMisclassifyNo$PercentDetrOrig, CNNCohenMisclassifyNo$PercentDetrPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 23")
+cohen.d(CNNCohenMisclassifyNo$PercentConjOrig, CNNCohenMisclassifyNo$PercentConjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 24")
+cohen.d(CNNCohenMisclassifyNo$PercentNamedEntOrig, CNNCohenMisclassifyNo$PercentNamedEntPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 25")
+cohen.d(CNNCohenMisclassifyNo$PercentPastVerbOrig, CNNCohenMisclassifyNo$PercentPastVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 26")
+cohen.d(CNNCohenMisclassifyNo$PercentPresentVerbOrig, CNNCohenMisclassifyNo$PercentPresentVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+```{r}
+#Disaggregating emails by those that were spam and those that were ham
+CNNCohenSpamPair = CNNWholeEmailCohen[which(CNNWholeEmailCohen$OriginalLabel == "Spam"),]
+View(CNNCohenSpamPair)
+CNNCohenHamPair = CNNWholeEmailCohen[which(CNNWholeEmailCohen$OriginalLabel == "Ham"),]
+View(CNNCohenHamPair)
+```
+
+```{r}
+#Cohen's d tests for spam emails
+print("test 1")
+cohen.d(CNNCohenSpamPair$LengthOrig, CNNCohenSpamPair$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 2")
+cohen.d(CNNCohenSpamPair$CharSentOrig, CNNCohenSpamPair$CharSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 3")
+cohen.d(CNNCohenSpamPair$CharWordOrig, CNNCohenSpamPair$CharWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 4")
+cohen.d(CNNCohenSpamPair$SyllOrig, CNNCohenSpamPair$SyllPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 5")
+cohen.d(CNNCohenSpamPair$SyllSentOrig, CNNCohenSpamPair$SyllSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 6")
+cohen.d(CNNCohenSpamPair$SyllWordOrig, CNNCohenSpamPair$SyllWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 7")
+cohen.d(CNNCohenSpamPair$PercentMonoOrig, CNNCohenSpamPair$PercentMonoPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 8")
+cohen.d(CNNCohenSpamPair$PercentDiOrig, CNNCohenSpamPair$PercentDiPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 9")
+cohen.d(CNNCohenSpamPair$PercentTriOrig, CNNCohenSpamPair$PercentTriPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 10")
+cohen.d(CNNCohenSpamPair$Percent4Orig, CNNCohenSpamPair$Percent4Pert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 11")
+cohen.d(CNNCohenSpamPair$SentimentOrig, CNNCohenSpamPair$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 12")
+cohen.d(CNNCohenSpamPair$SubjectivityOrig, CNNCohenSpamPair$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+# print("test 13")
+# cohen.d(CNNCohenMisclassifyYes$SubjectivityOrig, CNNCohenMisclassifyYes$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 13")
+cohen.d(CNNCohenSpamPair$ReadOrig, CNNCohenSpamPair$ReadPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 14")
+cohen.d(CNNCohenSpamPair$PercentCommonOrig, CNNCohenSpamPair$PercentCommonPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 15")
+cohen.d(CNNCohenSpamPair$LexRichOrig, CNNCohenSpamPair$LexRichPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 16")
+cohen.d(CNNCohenSpamPair$PercentStopOrig, CNNCohenSpamPair$PercentStopPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 17")
+cohen.d(CNNCohenSpamPair$PercentVerbsOrig, CNNCohenSpamPair$PercentVerbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 18")
+cohen.d(CNNCohenSpamPair$PercentAdverbsOrig, CNNCohenSpamPair$PercentAdverbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 19")
+cohen.d(CNNCohenSpamPair$PercentNounsOrig, CNNCohenSpamPair$PercentNounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 20")
+cohen.d(CNNCohenSpamPair$PercentPronounsOrig, CNNCohenSpamPair$PercentPronounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 21")
+cohen.d(CNNCohenSpamPair$PercentAdjOrig, CNNCohenSpamPair$PercentAdjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 22")
+cohen.d(CNNCohenSpamPair$PercentDetrOrig, CNNCohenSpamPair$PercentDetrPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 23")
+cohen.d(CNNCohenSpamPair$PercentConjOrig, CNNCohenSpamPair$PercentConjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 24")
+cohen.d(CNNCohenSpamPair$PercentNamedEntOrig, CNNCohenSpamPair$PercentNamedEntPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 25")
+cohen.d(CNNCohenSpamPair$PercentPastVerbOrig, CNNCohenSpamPair$PercentPastVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 26")
+cohen.d(CNNCohenSpamPair$PercentPresentVerbOrig, CNNCohenSpamPair$PercentPresentVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+
+Cohen's d tests for ham emails
+```{r}
+print("test 1")
+cohen.d(CNNCohenHamPair$LengthOrig, CNNCohenHamPair$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 2")
+cohen.d(CNNCohenHamPair$CharSentOrig, CNNCohenHamPair$CharSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 3")
+cohen.d(CNNCohenHamPair$CharWordOrig, CNNCohenHamPair$CharWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 4")
+cohen.d(CNNCohenHamPair$SyllOrig, CNNCohenHamPair$SyllPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 5")
+cohen.d(CNNCohenHamPair$SyllSentOrig, CNNCohenHamPair$SyllSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 6")
+cohen.d(CNNCohenHamPair$SyllWordOrig, CNNCohenHamPair$SyllWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 7")
+cohen.d(CNNCohenHamPair$PercentMonoOrig, CNNCohenHamPair$PercentMonoPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 8")
+cohen.d(CNNCohenHamPair$PercentDiOrig, CNNCohenHamPair$PercentDiPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 9")
+cohen.d(CNNCohenHamPair$PercentTriOrig, CNNCohenHamPair$PercentTriPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 10")
+cohen.d(CNNCohenHamPair$Percent4Orig, CNNCohenHamPair$Percent4Pert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 11")
+cohen.d(CNNCohenHamPair$SentimentOrig, CNNCohenHamPair$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 12")
+cohen.d(CNNCohenHamPair$SubjectivityOrig, CNNCohenHamPair$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+# print("test 13")
+# cohen.d(CNNCohenMisclassifyYes$SubjectivityOrig, CNNCohenMisclassifyYes$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 13")
+cohen.d(CNNCohenHamPair$ReadOrig, CNNCohenHamPair$ReadPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 14")
+cohen.d(CNNCohenHamPair$PercentCommonOrig, CNNCohenHamPair$PercentCommonPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 15")
+cohen.d(CNNCohenHamPair$LexRichOrig, CNNCohenHamPair$LexRichPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 16")
+cohen.d(CNNCohenHamPair$PercentStopOrig, CNNCohenHamPair$PercentStopPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 17")
+cohen.d(CNNCohenHamPair$PercentVerbsOrig, CNNCohenHamPair$PercentVerbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 18")
+cohen.d(CNNCohenHamPair$PercentAdverbsOrig, CNNCohenHamPair$PercentAdverbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 19")
+cohen.d(CNNCohenHamPair$PercentNounsOrig, CNNCohenHamPair$PercentNounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 20")
+cohen.d(CNNCohenHamPair$PercentPronounsOrig, CNNCohenHamPair$PercentPronounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 21")
+cohen.d(CNNCohenHamPair$PercentAdjOrig, CNNCohenHamPair$PercentAdjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 22")
+cohen.d(CNNCohenHamPair$PercentDetrOrig, CNNCohenHamPair$PercentDetrPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 23")
+cohen.d(CNNCohenHamPair$PercentConjOrig, CNNCohenHamPair$PercentConjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 24")
+cohen.d(CNNCohenHamPair$PercentNamedEntOrig, CNNCohenHamPair$PercentNamedEntPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 25")
+cohen.d(CNNCohenHamPair$PercentPastVerbOrig, CNNCohenHamPair$PercentPastVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 26")
+cohen.d(CNNCohenHamPair$PercentPresentVerbOrig, CNNCohenHamPair$PercentPresentVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+
+This is repeating the whole entire process that was just done for the WCNN-directed attack outputs.
+
+```{r}
+LSTMOriginalPerturbPairDF = read.csv("LSTMOrigPerturbPairDF.csv")
+View(LSTMOriginalPerturbPairDF)
+```
+
+
+
+
+
+```{r}
+cohen.d(LSTMOriginalPerturbPairDF$LengthOrig, LSTMOriginalPerturbPairDF$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(LSTMOriginalPerturbPairDF$SentimentOrig, LSTMOriginalPerturbPairDF$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(LSTMOriginalPerturbPairDF$SyllableOrig, LSTMOriginalPerturbPairDF$SyllablePert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+
+```
+```{r}
+cohen.d(LSTMOriginalPerturbPairDF$SubjectivityOrig, LSTMOriginalPerturbPairDF$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+```{r}
+LSTMMisclassifyYesPair = LSTMOriginalPerturbPairDF[which(LSTMOriginalPerturbPairDF$Misclassify == "Yes"),]
+View(LSTMMisclassifyYesPair)
+LSTMMisclassifyNoPair = LSTMOriginalPerturbPairDF[which(LSTMOriginalPerturbPairDF$Misclassify == "No"),]
+View(LSTMMisclassifyNoPair)
+```
+
+```{r}
+LSTMSpamPair = LSTMOriginalPerturbPairDF[which(LSTMOriginalPerturbPairDF$OriginalLabel == "Spam"),]
+View(LSTMSpamPair)
+LSTMHamPair = LSTMOriginalPerturbPairDF[which(LSTMOriginalPerturbPairDF$OriginalLabel == "Ham"),]
+View(LSTMHamPair)
+```
+
+```{r}
+cohen.d(LSTMMisclassifyYesPair$LengthOrig, LSTMMisclassifyYesPair$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(LSTMMisclassifyYesPair$SentimentOrig, LSTMMisclassifyYesPair$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(LSTMMisclassifyYesPair$SyllableOrig, LSTMMisclassifyYesPair$SyllablePert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(LSTMMisclassifyYesPair$SubjectivityOrig, LSTMMisclassifyYesPair$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+
+```{r}
+cohen.d(LSTMMisclassifyNoPair$LengthOrig, LSTMMisclassifyNoPair$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(LSTMMisclassifyNoPair$SentimentOrig, LSTMMisclassifyNoPair$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(LSTMMisclassifyNoPair$SyllableOrig, LSTMMisclassifyNoPair$SyllablePert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(LSTMMisclassifyNoPair$SubjectivityOrig, LSTMMisclassifyNoPair$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+
+```{r}
+cohen.d(LSTMSpamPair$LengthOrig, LSTMSpamPair$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(LSTMSpamPair$SentimentOrig, LSTMSpamPair$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(LSTMSpamPair$SyllableOrig, LSTMSpamPair$SyllablePert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(LSTMSpamPair$SubjectivityOrig, LSTMSpamPair$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+
+```{r}
+cohen.d(LSTMHamPair$LengthOrig, LSTMHamPair$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(LSTMHamPair$SentimentOrig, LSTMHamPair$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(LSTMHamPair$SyllableOrig, LSTMHamPair$SyllablePert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+cohen.d(LSTMHamPair$SubjectivityOrig, LSTMHamPair$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+
+```{r}
+LSTMwholeCohen = read.csv("LSTMWholeEmailCohen.csv")
+View(LSTMwholeCohen)
+```
+
+```{r}
+print("test 1")
+cohen.d(LSTMwholeCohen$LengthOrig, LSTMwholeCohen$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 2")
+cohen.d(LSTMwholeCohen$CharSentOrig, LSTMwholeCohen$CharSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 3")
+cohen.d(LSTMwholeCohen$CharWordOrig, LSTMwholeCohen$CharWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 4")
+cohen.d(LSTMwholeCohen$SyllOrig, LSTMwholeCohen$SyllPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 5")
+cohen.d(LSTMwholeCohen$SyllSentOrig, LSTMwholeCohen$SyllSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 6")
+cohen.d(LSTMwholeCohen$SyllWordOrig, LSTMwholeCohen$SyllWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 7")
+cohen.d(LSTMwholeCohen$PercentMonoOrig, LSTMwholeCohen$PercentMonoPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 8")
+cohen.d(LSTMwholeCohen$PercentDiOrig, LSTMwholeCohen$PercentDiPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 9")
+cohen.d(LSTMwholeCohen$PercentTriOrig, LSTMwholeCohen$PercentTriPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 10")
+cohen.d(LSTMwholeCohen$Percent4Orig, LSTMwholeCohen$Percent4Pert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 11")
+cohen.d(LSTMwholeCohen$SentimentOrig, LSTMwholeCohen$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 12")
+cohen.d(LSTMwholeCohen$SubjectivityOrig, LSTMwholeCohen$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+# print("test 13")
+# cohen.d(CNNCohenMisclassifyYes$SubjectivityOrig, CNNCohenMisclassifyYes$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 13")
+cohen.d(LSTMwholeCohen$ReadOrig, LSTMwholeCohen$ReadPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 14")
+cohen.d(LSTMwholeCohen$PercentCommonOrig, LSTMwholeCohen$PercentCommonPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 15")
+cohen.d(LSTMwholeCohen$LexRichOrig, LSTMwholeCohen$LexRichPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 16")
+cohen.d(LSTMwholeCohen$PercentStopOrig, LSTMwholeCohen$PercentStopPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 17")
+cohen.d(LSTMwholeCohen$PercentVerbsOrig, LSTMwholeCohen$PercentVerbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 18")
+cohen.d(LSTMwholeCohen$PercentAdverbsOrig, LSTMwholeCohen$PercentAdverbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 19")
+cohen.d(LSTMwholeCohen$PercentNounsOrig, LSTMwholeCohen$PercentNounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 20")
+cohen.d(LSTMwholeCohen$PercentPronounsOrig, LSTMwholeCohen$PercentPronounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 21")
+cohen.d(LSTMwholeCohen$PercentAdjOrig, LSTMwholeCohen$PercentAdjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 22")
+cohen.d(LSTMwholeCohen$PercentDetrOrig, LSTMwholeCohen$PercentDetrPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 23")
+cohen.d(LSTMwholeCohen$PercentConjOrig, LSTMwholeCohen$PercentConjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 24")
+cohen.d(LSTMwholeCohen$PercentNamedEntOrig, LSTMwholeCohen$PercentNamedEntPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 25")
+cohen.d(LSTMwholeCohen$PercentPastVerbOrig, LSTMwholeCohen$PercentPastVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 26")
+cohen.d(LSTMwholeCohen$PercentPresentVerbOrig, LSTMwholeCohen$PercentPresentVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+
+
+```{r}
+LSTMCohenMisclassifyYesPair = LSTMwholeCohen[which(LSTMwholeCohen$Misclassify == "Yes"),]
+View(LSTMCohenMisclassifyYesPair)
+LSTMCohenMisclassifyNoPair = LSTMwholeCohen[which(LSTMwholeCohen$Misclassify == "No"),]
+View(LSTMCohenMisclassifyNoPair)
+```
+
+
+```{r}
+print("test 1")
+cohen.d(LSTMCohenMisclassifyYesPair$LengthOrig, LSTMCohenMisclassifyYesPair$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 2")
+cohen.d(LSTMCohenMisclassifyYesPair$CharSentOrig, LSTMCohenMisclassifyYesPair$CharSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 3")
+cohen.d(LSTMCohenMisclassifyYesPair$CharWordOrig, LSTMCohenMisclassifyYesPair$CharWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 4")
+cohen.d(LSTMCohenMisclassifyYesPair$SyllOrig, LSTMCohenMisclassifyYesPair$SyllPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 5")
+cohen.d(LSTMCohenMisclassifyYesPair$SyllSentOrig, LSTMCohenMisclassifyYesPair$SyllSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 6")
+cohen.d(LSTMCohenMisclassifyYesPair$SyllWordOrig, LSTMCohenMisclassifyYesPair$SyllWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 7")
+cohen.d(LSTMCohenMisclassifyYesPair$PercentMonoOrig, LSTMCohenMisclassifyYesPair$PercentMonoPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 8")
+cohen.d(LSTMCohenMisclassifyYesPair$PercentDiOrig, LSTMCohenMisclassifyYesPair$PercentDiPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 9")
+cohen.d(LSTMCohenMisclassifyYesPair$PercentTriOrig, LSTMCohenMisclassifyYesPair$PercentTriPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 10")
+cohen.d(LSTMCohenMisclassifyYesPair$Percent4Orig, LSTMCohenMisclassifyYesPair$Percent4Pert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 11")
+cohen.d(LSTMCohenMisclassifyYesPair$SentimentOrig, LSTMCohenMisclassifyYesPair$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 12")
+cohen.d(LSTMCohenMisclassifyYesPair$SubjectivityOrig, LSTMCohenMisclassifyYesPair$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+# print("test 13")
+# cohen.d(CNNCohenMisclassifyYes$SubjectivityOrig, CNNCohenMisclassifyYes$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 13")
+cohen.d(LSTMCohenMisclassifyYesPair$ReadOrig, LSTMCohenMisclassifyYesPair$ReadPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 14")
+cohen.d(LSTMCohenMisclassifyYesPair$PercentCommonOrig, LSTMCohenMisclassifyYesPair$PercentCommonPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 15")
+cohen.d(LSTMCohenMisclassifyYesPair$LexRichOrig, LSTMCohenMisclassifyYesPair$LexRichPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 16")
+cohen.d(LSTMCohenMisclassifyYesPair$PercentStopOrig, LSTMCohenMisclassifyYesPair$PercentStopPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 17")
+cohen.d(LSTMCohenMisclassifyYesPair$PercentVerbsOrig, LSTMCohenMisclassifyYesPair$PercentVerbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 18")
+cohen.d(LSTMCohenMisclassifyYesPair$PercentAdverbsOrig, LSTMCohenMisclassifyYesPair$PercentAdverbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 19")
+cohen.d(LSTMCohenMisclassifyYesPair$PercentNounsOrig, LSTMCohenMisclassifyYesPair$PercentNounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 20")
+cohen.d(LSTMCohenMisclassifyYesPair$PercentPronounsOrig, LSTMCohenMisclassifyYesPair$PercentPronounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 21")
+cohen.d(LSTMCohenMisclassifyYesPair$PercentAdjOrig, LSTMCohenMisclassifyYesPair$PercentAdjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 22")
+cohen.d(LSTMCohenMisclassifyYesPair$PercentDetrOrig, LSTMCohenMisclassifyYesPair$PercentDetrPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 23")
+cohen.d(LSTMCohenMisclassifyYesPair$PercentConjOrig, LSTMCohenMisclassifyYesPair$PercentConjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 24")
+cohen.d(LSTMCohenMisclassifyYesPair$PercentNamedEntOrig, LSTMCohenMisclassifyYesPair$PercentNamedEntPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 25")
+cohen.d(LSTMCohenMisclassifyYesPair$PercentPastVerbOrig, LSTMCohenMisclassifyYesPair$PercentPastVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 26")
+cohen.d(LSTMCohenMisclassifyYesPair$PercentPresentVerbOrig, LSTMCohenMisclassifyYesPair$PercentPresentVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+
+```{r}
+print("test 1")
+cohen.d(LSTMCohenMisclassifyNoPair$LengthOrig, LSTMCohenMisclassifyNoPair$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 2")
+cohen.d(LSTMCohenMisclassifyNoPair$CharSentOrig, LSTMCohenMisclassifyNoPair$CharSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 3")
+cohen.d(LSTMCohenMisclassifyNoPair$CharWordOrig, LSTMCohenMisclassifyNoPair$CharWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 4")
+cohen.d(LSTMCohenMisclassifyNoPair$SyllOrig, LSTMCohenMisclassifyNoPair$SyllPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 5")
+cohen.d(LSTMCohenMisclassifyNoPair$SyllSentOrig, LSTMCohenMisclassifyNoPair$SyllSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 6")
+cohen.d(LSTMCohenMisclassifyNoPair$SyllWordOrig, LSTMCohenMisclassifyNoPair$SyllWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 7")
+cohen.d(LSTMCohenMisclassifyNoPair$PercentMonoOrig, LSTMCohenMisclassifyNoPair$PercentMonoPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 8")
+cohen.d(LSTMCohenMisclassifyNoPair$PercentDiOrig, LSTMCohenMisclassifyNoPair$PercentDiPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 9")
+cohen.d(LSTMCohenMisclassifyNoPair$PercentTriOrig, LSTMCohenMisclassifyNoPair$PercentTriPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 10")
+cohen.d(LSTMCohenMisclassifyNoPair$Percent4Orig, LSTMCohenMisclassifyNoPair$Percent4Pert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 11")
+cohen.d(LSTMCohenMisclassifyNoPair$SentimentOrig, LSTMCohenMisclassifyNoPair$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 12")
+cohen.d(LSTMCohenMisclassifyNoPair$SubjectivityOrig, LSTMCohenMisclassifyNoPair$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+# print("test 13")
+# cohen.d(CNNCohenMisclassifyYes$SubjectivityOrig, CNNCohenMisclassifyYes$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 13")
+cohen.d(LSTMCohenMisclassifyNoPair$ReadOrig, LSTMCohenMisclassifyNoPair$ReadPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 14")
+cohen.d(LSTMCohenMisclassifyNoPair$PercentCommonOrig, LSTMCohenMisclassifyNoPair$PercentCommonPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 15")
+cohen.d(LSTMCohenMisclassifyNoPair$LexRichOrig, LSTMCohenMisclassifyNoPair$LexRichPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 16")
+cohen.d(LSTMCohenMisclassifyNoPair$PercentStopOrig, LSTMCohenMisclassifyNoPair$PercentStopPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 17")
+cohen.d(LSTMCohenMisclassifyNoPair$PercentVerbsOrig, LSTMCohenMisclassifyNoPair$PercentVerbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 18")
+cohen.d(LSTMCohenMisclassifyNoPair$PercentAdverbsOrig, LSTMCohenMisclassifyNoPair$PercentAdverbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 19")
+cohen.d(LSTMCohenMisclassifyNoPair$PercentNounsOrig, LSTMCohenMisclassifyNoPair$PercentNounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 20")
+cohen.d(LSTMCohenMisclassifyNoPair$PercentPronounsOrig, LSTMCohenMisclassifyNoPair$PercentPronounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 21")
+cohen.d(LSTMCohenMisclassifyNoPair$PercentAdjOrig, LSTMCohenMisclassifyNoPair$PercentAdjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 22")
+cohen.d(LSTMCohenMisclassifyNoPair$PercentDetrOrig, LSTMCohenMisclassifyNoPair$PercentDetrPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 23")
+cohen.d(LSTMCohenMisclassifyNoPair$PercentConjOrig, LSTMCohenMisclassifyNoPair$PercentConjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 24")
+cohen.d(LSTMCohenMisclassifyNoPair$PercentNamedEntOrig, LSTMCohenMisclassifyNoPair$PercentNamedEntPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 25")
+cohen.d(LSTMCohenMisclassifyNoPair$PercentPastVerbOrig, LSTMCohenMisclassifyNoPair$PercentPastVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 26")
+cohen.d(LSTMCohenMisclassifyNoPair$PercentPresentVerbOrig, LSTMCohenMisclassifyNoPair$PercentPresentVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+
+
+```{r}
+LSTMCohenSpamPair = LSTMwholeCohen[which(LSTMwholeCohen$OriginalLabel == "Spam"),]
+View(LSTMCohenSpamPair)
+LSTMCohenHamPair = LSTMwholeCohen[which(LSTMwholeCohen$OriginalLabel == "Ham"),]
+View(LSTMCohenHamPair)
+```
+
+```{r}
+print("test 1")
+cohen.d(LSTMCohenSpamPair$LengthOrig, LSTMCohenSpamPair$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 2")
+cohen.d(LSTMCohenSpamPair$CharSentOrig, LSTMCohenSpamPair$CharSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 3")
+cohen.d(LSTMCohenSpamPair$CharWordOrig, LSTMCohenSpamPair$CharWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 4")
+cohen.d(LSTMCohenSpamPair$SyllOrig, LSTMCohenSpamPair$SyllPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 5")
+cohen.d(LSTMCohenSpamPair$SyllSentOrig, LSTMCohenSpamPair$SyllSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 6")
+cohen.d(LSTMCohenSpamPair$SyllWordOrig, LSTMCohenSpamPair$SyllWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 7")
+cohen.d(LSTMCohenSpamPair$PercentMonoOrig, LSTMCohenSpamPair$PercentMonoPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 8")
+cohen.d(LSTMCohenSpamPair$PercentDiOrig, LSTMCohenSpamPair$PercentDiPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 9")
+cohen.d(LSTMCohenSpamPair$PercentTriOrig, LSTMCohenSpamPair$PercentTriPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 10")
+cohen.d(LSTMCohenSpamPair$Percent4Orig, LSTMCohenSpamPair$Percent4Pert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 11")
+cohen.d(LSTMCohenSpamPair$SentimentOrig, LSTMCohenSpamPair$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 12")
+cohen.d(LSTMCohenSpamPair$SubjectivityOrig, LSTMCohenSpamPair$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+# print("test 13")
+# cohen.d(CNNCohenMisclassifyYes$SubjectivityOrig, CNNCohenMisclassifyYes$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 13")
+cohen.d(LSTMCohenSpamPair$ReadOrig, LSTMCohenSpamPair$ReadPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 14")
+cohen.d(LSTMCohenSpamPair$PercentCommonOrig, LSTMCohenSpamPair$PercentCommonPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 15")
+cohen.d(LSTMCohenSpamPair$LexRichOrig, LSTMCohenSpamPair$LexRichPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 16")
+cohen.d(LSTMCohenSpamPair$PercentStopOrig, LSTMCohenSpamPair$PercentStopPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 17")
+cohen.d(LSTMCohenSpamPair$PercentVerbsOrig, LSTMCohenSpamPair$PercentVerbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 18")
+cohen.d(LSTMCohenSpamPair$PercentAdverbsOrig, LSTMCohenSpamPair$PercentAdverbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 19")
+cohen.d(LSTMCohenSpamPair$PercentNounsOrig, LSTMCohenSpamPair$PercentNounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 20")
+cohen.d(LSTMCohenSpamPair$PercentPronounsOrig, LSTMCohenSpamPair$PercentPronounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 21")
+cohen.d(LSTMCohenSpamPair$PercentAdjOrig, LSTMCohenSpamPair$PercentAdjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 22")
+cohen.d(LSTMCohenSpamPair$PercentDetrOrig, LSTMCohenSpamPair$PercentDetrPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 23")
+cohen.d(LSTMCohenSpamPair$PercentConjOrig, LSTMCohenSpamPair$PercentConjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 24")
+cohen.d(LSTMCohenSpamPair$PercentNamedEntOrig, LSTMCohenSpamPair$PercentNamedEntPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 25")
+cohen.d(LSTMCohenSpamPair$PercentPastVerbOrig, LSTMCohenSpamPair$PercentPastVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 26")
+cohen.d(LSTMCohenSpamPair$PercentPresentVerbOrig, LSTMCohenSpamPair$PercentPresentVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+
+
+```{r}
+print("test 1")
+cohen.d(LSTMCohenHamPair$LengthOrig, LSTMCohenHamPair$LengthPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 2")
+cohen.d(LSTMCohenHamPair$CharSentOrig, LSTMCohenHamPair$CharSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 3")
+cohen.d(LSTMCohenHamPair$CharWordOrig, LSTMCohenHamPair$CharWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 4")
+cohen.d(LSTMCohenHamPair$SyllOrig, LSTMCohenHamPair$SyllPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 5")
+cohen.d(LSTMCohenHamPair$SyllSentOrig, LSTMCohenHamPair$SyllSentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 6")
+cohen.d(LSTMCohenHamPair$SyllWordOrig, LSTMCohenHamPair$SyllWordPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 7")
+cohen.d(LSTMCohenHamPair$PercentMonoOrig, LSTMCohenHamPair$PercentMonoPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 8")
+cohen.d(LSTMCohenHamPair$PercentDiOrig, LSTMCohenHamPair$PercentDiPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 9")
+cohen.d(LSTMCohenHamPair$PercentTriOrig, LSTMCohenHamPair$PercentTriPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 10")
+cohen.d(LSTMCohenHamPair$Percent4Orig, LSTMCohenHamPair$Percent4Pert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 11")
+cohen.d(LSTMCohenHamPair$SentimentOrig, LSTMCohenHamPair$SentimentPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 12")
+cohen.d(LSTMCohenHamPair$SubjectivityOrig, LSTMCohenHamPair$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+# print("test 13")
+# cohen.d(CNNCohenMisclassifyYes$SubjectivityOrig, CNNCohenMisclassifyYes$SubjectivityPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 13")
+cohen.d(LSTMCohenHamPair$ReadOrig, LSTMCohenHamPair$ReadPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 14")
+cohen.d(LSTMCohenHamPair$PercentCommonOrig, LSTMCohenHamPair$PercentCommonPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 15")
+cohen.d(LSTMCohenHamPair$LexRichOrig, LSTMCohenHamPair$LexRichPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 16")
+cohen.d(LSTMCohenHamPair$PercentStopOrig, LSTMCohenHamPair$PercentStopPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 17")
+cohen.d(LSTMCohenHamPair$PercentVerbsOrig, LSTMCohenHamPair$PercentVerbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 18")
+cohen.d(LSTMCohenHamPair$PercentAdverbsOrig, LSTMCohenHamPair$PercentAdverbsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 19")
+cohen.d(LSTMCohenHamPair$PercentNounsOrig, LSTMCohenHamPair$PercentNounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 20")
+cohen.d(LSTMCohenHamPair$PercentPronounsOrig, LSTMCohenHamPair$PercentPronounsPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 21")
+cohen.d(LSTMCohenHamPair$PercentAdjOrig, LSTMCohenHamPair$PercentAdjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 22")
+cohen.d(LSTMCohenHamPair$PercentDetrOrig, LSTMCohenHamPair$PercentDetrPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 23")
+cohen.d(LSTMCohenHamPair$PercentConjOrig, LSTMCohenHamPair$PercentConjPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 24")
+cohen.d(LSTMCohenHamPair$PercentNamedEntOrig, LSTMCohenHamPair$PercentNamedEntPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 25")
+cohen.d(LSTMCohenHamPair$PercentPastVerbOrig, LSTMCohenHamPair$PercentPastVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+print("test 26")
+cohen.d(LSTMCohenHamPair$PercentPresentVerbOrig, LSTMCohenHamPair$PercentPresentVerbPert, na.rm = TRUE, paired = FALSE, pooled=TRUE)
+```
+
+
+
+CLASSIFICATION
+
+Here I prepare read the csv file made in Python. I will use the Email column to generate TF-IDF weighted tokens
+```{r}
+ClassificationDF = read.csv("ClassificationDataFrame.csv")
+View(ClassificationDF)
+```
+
+```{r}
+library(caret)
+#library()
+```
+
+Conversion to dataframe
+```{r}
+ClassifyDF = data.frame(ClassificationDF)
+View(ClassifyDF)
+```
+Making the Email column a character column (it was factor before)
+
+```{r}
+ClassifyDF$Email = as.character(ClassifyDF$Email)
+View(ClassifyDF)
+```
+
+Making a corpus object
+```{r}
+ClassificationEmailCorpus = corpus(
+  ClassifyDF,
+  docid_field = "OrigorPert",
+  text_field = "Email",
+  meta = list()
+)
+  
+# CNNcorp = corpus(
+#   CNNadvDF,
+#   docid_field = "X",
+#   text_field = "Text",
+#   meta = list(),
+#   unique_docnames = TRUE,
+#   
+# )
+```
+
+```{r}
+View(ClassificationEmailCorpus$documents)
+```
+
+
+Document feature matrix with uni, bi and trigrams, with lowercasing, punctuation removed but no stemming
+```{r}
+ClassifyNoPunctUniBiTri =  dfm(x = ClassificationEmailCorpus$documents$texts, ngrams = 1:3, tolower = T, verbose = F, remove_punct = T, stem = F) 
+```
+
+```{r}
+
+```
+
+
+
+SPARSITY CORRECTION
+```{r}
+UniBiTri_corrected = dfm_trim(ClassifyNoPunctUniBiTri, sparsity = 0.95)
+```
+
+```{r}
+dim(ClassifyNoPunctUniBiTri)
+dim(UniBiTri_corrected)
+```
+
+```{r}
+
+```
+
+TFIDF generationg and top features 
+```{r}
+tfidClassifyUniBiTrinopunct = dfm_tfidf(UniBiTri_corrected, scheme_df = 'inverse', scheme_tf = 'prop', k=1)
+#View(tfidCNNUni1)
+topfeatures(tfidClassifyUniBiTrinopunct)
+```
+
+```{r}
+View(tfidClassifyUniBiTrinopunct)
+```
+
+```{r}
+library(quanteda)
+```
+
+```{r}
+tfidfclassdataframe = as.data.frame(
+  tfidClassifyUniBiTrinopunct)
+```
+
+```{r}
+# I convert the TFIDF to a dataframe
+tfidfclassdataframe = convert(tfidClassifyUniBiTrinopunct, to = "data.frame")
+View(tfidfclassdataframe)
+```
+
+```{r}
+#Dropping the document column
+dropColumnName1 = c("document")
+RemovedFirstColDF = tfidfclassdataframe[ , !(names(tfidfclassdataframe) %in% dropColumnName1)]
+View(RemovedFirstColDF)
+```
+
+```{r}
+#I add the TFIDF tokens as columns onto ClassifyDF, so that they will be used as features during classification
+BindedClassify = cbind(ClassifyDF, RemovedFirstColDF)
+dim(ClassifyDF)
+dim(RemovedFirstColDF)
+dim(BindedClassify)
+```
+```{r}
+
+# BindedModel1drop will be used for the binary original or perturbed email classification task in Section 3.3. of the dissertation
+BindedModel1drop = c("OrigorPert", "Email")
+# BindedModel2drop will be used for the multilabel original or perturbed email (WCNN or LSTM output) classification task in Section 3.3. of the dissertation
+BindedModel2drop = c("OrigLSTMorCNN", "Email")
+
+```
+
+```{r}
+BindedModel1DF = BindedClassify[ , !(names(BindedClassify) %in% BindedModel1drop)]
+dim(BindedModel1DF)
+BindedModel2DF = BindedClassify[ , !(names(BindedClassify) %in% BindedModel2drop)]
+dim(BindedModel2DF)
+```
+
+Writing these files as csv
+```{r}
+write.csv(BindedModel2DF,"D:\\Virtual Machine Backup\\OrigorPertDF.csv", row.names = FALSE)
+```
+
+```{r}
+write.csv(BindedModel1DF,"D:\\Virtual Machine Backup\\OrigorCNNPertorLSTMPertDF.csv", row.names = FALSE)
+```
+
