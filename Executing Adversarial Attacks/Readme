@@ -1,1 +1,18 @@
 
+To run the word paraphrasing attack, follow the steps in https://github.com/cecilialeiqi/adversarial_text  (I skipped Step 3
+because in my dissertation I did not execute the sentence paraphrasing attack).
+
+It is highly recommended to run this in Ubuntu or a Linux based environment (I ran it in a Virtual Machine)
+
+Furthermore, in Step 4 it says "In the Makefile, change the input parameter model_path to the above generated models; also, change the input parameter first_label to the first label name (e.g. FAKE for the news data) appeared in the training file. (Otherwise the model doesn't distinguish positive and negative labels)"
+Although, I have I already fixed this in the current version of the Makefile, for the Trec07p datasets DO NOT PUT FAKE AS THE LABEL IN THE MAKEFILE. This is not correct. What this does is that actually it will flip the model's predictions and essentially only execute the attack when the model initially misclassifies the input
+email. For the test Trec07p dataset, the first email is REAL. 
+
+
+Note, before running this attack, you need to get the embeddings used from here
+
+https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fdrive.google.com%2Ffile%2Fd%2F0B9w48e1rj-MOck1fRGxaZW1LU2M%2Fview%3Fusp%3Dsharing&data=02%7C01%7C%7C36fd021bae0343bbe54408d7bdd28c81%7C1faf88fea9984c5b93c9210a11d9a5c2%7C0%7C0%7C637186584305548961&sdata=PouX2kyBlnQHpzAaDKjqe7gFC3ctti6tjBcGWt8pg1s%3D&reserved=0
+
+Or from Wieting's website https://www.cs.cmu.edu/~jwieting/
+
+ALSO, you must add 1703756 300 to the first line of this file which represents the number of lines (tokens) and number of embeddings per token
