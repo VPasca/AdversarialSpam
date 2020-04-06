@@ -1,5 +1,13 @@
 The data stored here is the train and test Trec07p datasets (tsv files) needed for training the models and executing the attack.
 
+Test Trec07p tsv file
+
+https://www.dropbox.com/s/ms9p2hoz8ocvgmg/test.tsv?dl=0
+
+Train Trec07p tsv file
+
+https://www.dropbox.com/s/ikvdy3upkid4d6k/train.tsv?dl=0
+
 NOTA BENE!!!!!
 
 When I was trying to run the word-level paraphrasing attack on the test Trec07p dataset, I had to remove two empty email
