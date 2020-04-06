@@ -1,0 +1,6 @@
+The data stored here is the train and test Trec07p datasets (tsv files) needed for training the models and executing the attack.
+
+NOTA BENE!!!!!
+
+When I was trying to run the word-level paraphrasing attack on the test Trec07p dataset, I had to remove two empty email
+instances. Within the test Trec07p dataset, they should be at index row 1391 and 3381. 
